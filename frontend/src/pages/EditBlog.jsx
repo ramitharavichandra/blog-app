@@ -12,6 +12,7 @@ const EditBlog = () => {
     category: 'Technology',
   });
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -44,13 +45,14 @@ const EditBlog = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
+      setSubmitting(true);
       setError('');
       await blogService.updateBlog(id, formData);
       navigate(`/blog/${id}`);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update blog');
-      setLoading(false);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -118,8 +120,8 @@ const EditBlog = () => {
         </div>
 
         <div className="flex gap-4">
-          <button type="submit" disabled={loading} className="btn-primary">
-            {loading ? 'Updating...' : 'Update Blog'}
+          <button type="submit" disabled={submitting} className="btn-primary">
+            {submitting ? 'Updating...' : 'Update Blog'}
           </button>
           <button type="button" onClick={() => navigate(-1)} className="btn-secondary">
             Cancel

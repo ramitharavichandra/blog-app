@@ -15,6 +15,13 @@ const authMiddleware = (req, res, next) => {
 
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (!decoded.id) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid token payload',
+      });
+    }
+
     req.userId = decoded.id;
     req.userEmail = decoded.email;
 
@@ -23,13 +30,6 @@ const authMiddleware = (req, res, next) => {
         path: req.path,
         method: req.method,
         userId: req.userId,
-      });
-    }
-
-    if (!req.userId) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid token payload',
       });
     }
 
