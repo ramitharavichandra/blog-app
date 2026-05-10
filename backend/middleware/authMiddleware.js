@@ -15,14 +15,16 @@ const authMiddleware = (req, res, next) => {
 
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decoded.id || decoded.userId || decoded._id;
+    req.userId = decoded.id;
     req.userEmail = decoded.email;
 
-    console.log('[authMiddleware] Authenticated request', {
-      path: req.path,
-      method: req.method,
-      userId: req.userId,
-    });
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[authMiddleware] Authenticated request', {
+        path: req.path,
+        method: req.method,
+        userId: req.userId,
+      });
+    }
 
     if (!req.userId) {
       return res.status(401).json({
@@ -33,7 +35,9 @@ const authMiddleware = (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error('[authMiddleware] Token verification failed:', error.message);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('[authMiddleware] Token verification failed:', error.message);
+    }
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({
         success: false,

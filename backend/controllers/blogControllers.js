@@ -6,7 +6,9 @@ exports.createBlog = async (req, res) => {
   try {
     const { title, content, description, category } = req.body;
 
-    console.log('[createBlog] Creating blog for user:', req.userId);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[createBlog] Creating blog for user:', req.userId);
+    }
 
     const blog = new Blog({
       title,
@@ -112,13 +114,17 @@ exports.getBlogById = async (req, res) => {
 // Get user's blogs
 exports.getUserBlogs = async (req, res) => {
   try {
-    console.log('[getUserBlogs] Querying blogs', { author: req.userId });
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[getUserBlogs] Querying blogs', { author: req.userId });
+    }
 
     const blogs = await Blog.find({ author: req.userId })
       .populate('author', 'name email avatar')
       .sort({ createdAt: -1 });
 
-    console.log('[getUserBlogs] Blogs found:', blogs.length);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[getUserBlogs] Blogs found:', blogs.length);
+    }
 
     res.status(200).json({
       success: true,
