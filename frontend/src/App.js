@@ -10,6 +10,7 @@ import Register from './pages/Register';
 import CreateBlog from './pages/CreateBlog';
 import BlogDetail from './pages/BlogDetail';
 import Dashboard from './pages/Dashboard';
+import EditBlog from './pages/EditBlog';
 
 // Provider
 import { AuthProvider } from './context/AuthContext';
@@ -41,6 +42,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <EditBlog />
                 </ProtectedRoute>
               }
             />

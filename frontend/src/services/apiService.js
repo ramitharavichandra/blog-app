@@ -9,6 +9,22 @@ const api = axios.create({
   },
 });
 
+export const applyAuthHeader = (config) => {
+  const nextConfig = { ...config };
+  nextConfig.headers = nextConfig.headers || {};
+
+  const token = localStorage.getItem('token');
+  if (token) {
+    nextConfig.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return nextConfig;
+};
+
+api.interceptors.request.use((config) => {
+  return applyAuthHeader(config);
+});
+
 export const blogService = {
   getAllBlogs: (params) => api.get('/blogs', { params }),
   getBlogById: (id) => api.get(`/blogs/${id}`),
