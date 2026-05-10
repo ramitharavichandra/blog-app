@@ -1,10 +1,12 @@
 {
   "experimentalServices": {
     "frontend": {
-      "entrypoint": "frontend"
+      "entrypoint": "frontend",
+      "framework": "create-react-app"
     },
     "backend": {
-      "entrypoint": "backend"
+      "entrypoint": "backend",
+      "framework": "express"
     }
   }
 }
