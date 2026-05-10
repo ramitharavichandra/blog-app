@@ -1,18 +1,41 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { blogService } from '../services/apiService';
 import { useToast } from '../context/ToastContext';
 
 const CATEGORIES = ['Technology', 'Business', 'Lifestyle', 'Travel', 'Food', 'Other'];
 
-const CreateBlog = () => {
-  const [formData, setFormData] = useState({ title: '', content: '', description: '', category: 'Technology' });
-  const [loading, setLoading] = useState(false);
+const EditBlog = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const [formData, setFormData] = useState({ title: '', content: '', description: '', category: 'Technology' });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   const wordCount = formData.content.trim() ? formData.content.trim().split(/\s+/).length : 0;
   const readTime = Math.max(1, Math.ceil(wordCount / 200));
+
+  useEffect(() => {
+    const fetchBlog = async () => {
+      try {
+        const response = await blogService.getBlogById(id);
+        const blog = response.data.blog;
+        setFormData({
+          title: blog.title || '',
+          content: blog.content || '',
+          description: blog.description || '',
+          category: blog.category || 'Technology',
+        });
+      } catch {
+        showToast('Failed to load blog', 'error');
+        navigate('/dashboard');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBlog();
+  }, [id]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -21,22 +44,35 @@ const CreateBlog = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
-      await blogService.createBlog(formData);
-      showToast('Blog published!', 'success');
-      navigate('/dashboard');
+      setSaving(true);
+      await blogService.updateBlog(id, formData);
+      showToast('Blog updated!', 'success');
+      navigate(`/blog/${id}`);
     } catch (err) {
-      showToast(err.response?.data?.message || 'Failed to create blog', 'error');
+      showToast(err.response?.data?.message || 'Failed to update blog', 'error');
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 16px' }}>
+        <div className="skeleton" style={{ height: 32, width: '30%', marginBottom: 32 }} />
+        <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8edf3', padding: 32 }}>
+          <div className="skeleton" style={{ height: 48, marginBottom: 20 }} />
+          <div className="skeleton" style={{ height: 48, marginBottom: 20 }} />
+          <div className="skeleton" style={{ height: 280 }} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 16px' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 className="page-title">Write a Blog</h1>
-        <p style={{ color: '#64748b', marginTop: 4 }}>Share your ideas with the world</p>
+        <h1 className="page-title">Edit Blog</h1>
+        <p style={{ color: '#64748b', marginTop: 4 }}>Update your post</p>
       </div>
 
       <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8edf3', padding: 32 }}>
@@ -49,7 +85,7 @@ const CreateBlog = () => {
               value={formData.title}
               onChange={handleChange}
               className="input-field"
-              placeholder="Give your blog a great title..."
+              placeholder="Blog title"
               required
               style={{ fontSize: 18, fontWeight: 600 }}
             />
@@ -93,14 +129,14 @@ const CreateBlog = () => {
               onChange={handleChange}
               className="input-field"
               style={{ height: 280, fontSize: 15, lineHeight: 1.7 }}
-              placeholder="Write your blog content here..."
+              placeholder="Write your blog content..."
               required
             />
           </div>
 
           <div style={{ display: 'flex', gap: 12, paddingTop: 8 }}>
-            <button type="submit" disabled={loading} className="btn-primary" style={{ flex: 1, justifyContent: 'center' }}>
-              {loading ? 'Publishing...' : 'Publish Blog'}
+            <button type="submit" disabled={saving} className="btn-primary" style={{ flex: 1, justifyContent: 'center' }}>
+              {saving ? 'Saving...' : 'Save Changes'}
             </button>
             <button type="button" onClick={() => navigate(-1)} className="btn-secondary">
               Cancel
@@ -112,4 +148,4 @@ const CreateBlog = () => {
   );
 };
 
-export default CreateBlog;
+export default EditBlog;

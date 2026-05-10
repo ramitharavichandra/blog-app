@@ -1,19 +1,21 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL;
-
 const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: process.env.REACT_APP_API_URL,
+  headers: { 'Content-Type': 'application/json' },
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
 });
 
 export const blogService = {
   getAllBlogs: (params) => api.get('/blogs', { params }),
   getBlogById: (id) => api.get(`/blogs/${id}`),
-  createBlog: (data) => api.post('/blogs', data),
   getUserBlogs: () => api.get('/blogs/user/my-blogs'),
+  createBlog: (data) => api.post('/blogs', data),
   updateBlog: (id, data) => api.put(`/blogs/${id}`, data),
   deleteBlog: (id) => api.delete(`/blogs/${id}`),
   likeBlog: (id) => api.post(`/blogs/${id}/like`),
