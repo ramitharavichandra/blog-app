@@ -35,7 +35,7 @@ const EditBlog = () => {
       }
     };
     fetchBlog();
-  }, [id]);
+  }, [id, showToast, navigate]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));

@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
 const Profile = () => {
-  const { user } = useAuth();
+  useAuth();
   const { showToast } = useToast();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -26,7 +26,7 @@ const Profile = () => {
       }
     };
     fetchProfile();
-  }, []);
+  }, [showToast]);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
