@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
 
 // Verify JWT token
 const authMiddleware = (req, res, next) => {
@@ -16,7 +15,7 @@ const authMiddleware = (req, res, next) => {
 
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (!decoded.id || !mongoose.Types.ObjectId.isValid(decoded.id)) {
+    if (!decoded.id || !/^[0-9a-fA-F]{24}$/.test(decoded.id)) {
       return res.status(401).json({
         success: false,
         message: 'Invalid token payload',

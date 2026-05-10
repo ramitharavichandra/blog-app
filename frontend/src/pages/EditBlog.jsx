@@ -87,7 +87,7 @@ const EditBlog = () => {
             value={formData.description}
             onChange={handleChange}
             className="input-field"
-            maxLength="500"
+            maxLength={500}
           />
         </div>
 
