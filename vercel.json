@@ -2,11 +2,13 @@
   "experimentalServices": {
     "frontend": {
       "entrypoint": "frontend",
-      "framework": "create-react-app"
+      "framework": "create-react-app",
+      "routePrefix": "/"
     },
     "backend": {
       "entrypoint": "backend",
-      "framework": "express"
+      "framework": "express",
+      "routePrefix": "/api"
     }
   }
 }
