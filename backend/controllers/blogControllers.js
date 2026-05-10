@@ -6,6 +6,8 @@ exports.createBlog = async (req, res) => {
   try {
     const { title, content, description, category } = req.body;
 
+    console.log('[createBlog] Creating blog for user:', req.userId);
+
     const blog = new Blog({
       title,
       content,
@@ -110,9 +112,13 @@ exports.getBlogById = async (req, res) => {
 // Get user's blogs
 exports.getUserBlogs = async (req, res) => {
   try {
+    console.log('[getUserBlogs] Querying blogs', { author: req.userId });
+
     const blogs = await Blog.find({ author: req.userId })
       .populate('author', 'name email avatar')
       .sort({ createdAt: -1 });
+
+    console.log('[getUserBlogs] Blogs found:', blogs.length);
 
     res.status(200).json({
       success: true,
