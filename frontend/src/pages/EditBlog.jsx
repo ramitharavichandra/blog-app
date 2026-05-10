@@ -56,7 +56,7 @@ const EditBlog = () => {
     }
   };
 
-  if (loading && !formData.title) {
+  if (loading) {
     return <p className="text-center mt-12">Loading blog...</p>;
   }
 

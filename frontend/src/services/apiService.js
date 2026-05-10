@@ -9,12 +9,20 @@ const api = axios.create({
   },
 });
 
-api.interceptors.request.use((config) => {
+export const applyAuthHeader = (config) => {
+  const nextConfig = { ...config };
+  nextConfig.headers = nextConfig.headers || {};
+
   const token = localStorage.getItem('token');
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    nextConfig.headers.Authorization = `Bearer ${token}`;
   }
-  return config;
+
+  return nextConfig;
+};
+
+api.interceptors.request.use((config) => {
+  return applyAuthHeader(config);
 });
 
 export const blogService = {
