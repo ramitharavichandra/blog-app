@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { blogService } from '../services/apiService';
 
+const DESCRIPTION_MAX_LENGTH = 500;
+
 const EditBlog = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -87,7 +89,7 @@ const EditBlog = () => {
             value={formData.description}
             onChange={handleChange}
             className="input-field"
-            maxLength={500}
+            maxLength={DESCRIPTION_MAX_LENGTH}
           />
         </div>
 
